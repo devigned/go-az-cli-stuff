@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"os/exec"
@@ -88,7 +89,29 @@ func main() {
 			panic(err)
 		}
 
-		fmt.Printf("Heres my token %+v\n", token)
+		req, err := http.NewRequest(http.MethodGet, "https://management.azure.com/tenants?api-version=2019-11-01", nil)
+		if err != nil {
+			panic(err)
+		}
+
+		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token.AccessToken))
+		bits, err = httputil.DumpRequest(req, true)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Request: \n" + string(bits))
+
+		res, err = http.DefaultClient.Do(req)
+		if err != nil {
+			panic(err)
+		}
+
+		bits, err = httputil.DumpResponse(res, true)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("Response: \n" + string(bits))
 	}
 
 	_ = server.Shutdown(context.TODO())
