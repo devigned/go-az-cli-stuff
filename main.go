@@ -22,7 +22,7 @@ const (
 	tokenEndpoint   = "https://login.microsoftonline.com/organizations/oauth2/v2.0/token"
 	// scopes for a multi-tenant app works for openid, email, other common scopes, but fails when trying to add a token
 	// v1 scope like "https://management.azure.com/.default" for ARM access
-	scopes   = "https://management.azure.com/.default"
+	scopes   = "offline_access https://management.azure.com/.default"
 	clientID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46" // Azure CLI client id
 	// clientID = "0c8817d6-7e91-4307-b998-8f453f006481" // third party application I created
 )
@@ -80,6 +80,7 @@ func main() {
 		}
 
 		bits, err := ioutil.ReadAll(res.Body)
+		fmt.Printf("token response: %s\n\n", string(bits))
 		if err != nil {
 			panic(err)
 		}
